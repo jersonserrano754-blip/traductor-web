@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Traductor Español a cualquier idioma</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #4c1d95, #6d28d9, #db2777);
+      margin: 0;
+      padding: 0;
+      color: white;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px black;
+    }
+    textarea, select, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+    }
+    textarea {
+      min-height: 120px;
+    }
+    button {
+      background: linear-gradient(to right, #6366f1, #ec4899);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .resultado {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      min-height: 100px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌐 Traductor Español → Cualquier idioma</h1>
+
+    <label for="texto">Texto en español:</label>
+    <textarea id="texto" placeholder="Escribe aquí tu texto..."></textarea>
+
+    <label for="idioma">Selecciona idioma destino:</label>
+    <select id="idioma"></select>
+
+    <button onclick="traducir()">Traducir</button>
+
+    <div class="resultado" id="resultado">Aquí aparecerá la traducción...</div>
+  </div>
+
+  <script>
+    const idiomas = {
+      en: 'Inglés',
+      fr: 'Francés',
+      de: 'Alemán',
+      it: 'Italiano',
+      pt: 'Portugués',
+      ja: 'Japonés',
+      ko: 'Coreano',
+      zh: 'Chino (simplificado)',
+      'zh-TW': 'Chino (tradicional)',
+      ar: 'Árabe',
+      ru: 'Ruso',
+      hi: 'Hindi',
+      tr: 'Turco',
+      sv: 'Sueco',
+      no: 'Noruego',
+      da: 'Danés',
+      fi: 'Finlandés',
+      pl: 'Polaco',
+      ro: 'Rumano',
+      uk: 'Ucraniano',
+      el: 'Griego',
+      nl: 'Holandés',
+      cs: 'Checo',
+      hu: 'Húngaro',
+      id: 'Indonesio',
+      th: 'Tailandés',
+      vi: 'Vietnamita',
+      he: 'Hebreo'
+    };
+
+    const select = document.getElementById("idioma");
+    for (const codigo in idiomas) {
+      const option = document.createElement("option");
+      option.value = codigo;
+      option.textContent = idiomas[codigo];
+      select.appendChild(option);
+    }
+
+    async function traducir() {
+      const texto = document.getElementById("texto").value.trim();
+      const destino = document.getElementById("idioma").value;
+      const resultado = document.getElementById("resultado");
+
+      if (!texto) {
+        resultado.textContent = "⚠️ Escribe algo para traducir.";
+        return;
+      }
+
+      resultado.textContent = "⌛ Traduciendo...";
+
+      try {
+        const res = await fetch("https://libretranslate.de/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            q: texto,
+            source: "es",
+            target: destino,
+            format: "text"
+          })
+        });
+
+        const data = await res.json();
+        resultado.textContent = data.translatedText || "❌ Error en la traducción.";
+      } catch (e) {
+        resultado.textContent = "❌ No se pudo traducir. Verifica tu conexión.";
+      }
+    }
+  </script>
+</body>
+</html>
